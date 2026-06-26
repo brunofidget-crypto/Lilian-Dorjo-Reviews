@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: lilian-dorjo-reviews
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4
+    envVars:
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USER
+        value: brunofidget@gmail.com
+      - key: EMAIL_PASSWORD
+        value: okqpnkvcaaflawwd
+      - key: FROM_NAME
+        value: Lilian Dorjo
+      - key: PYTHON_VERSION
+        value: "3.11.0"
