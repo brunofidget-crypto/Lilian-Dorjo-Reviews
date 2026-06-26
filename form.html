@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lilian Dorjo — Client Experience</title>
+  <meta name="description" content="Share your experience working with Lilian Dorjo, Connecticut real estate professional."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════════ */
+:root {
+  --navy:        #0d1b2a;
+  --navy-mid:    #152236;
+  --navy-light:  #1e3250;
+  --gold:        #c9a84c;
+  --gold-soft:   rgba(201,168,76,.15);
+  --gold-dim:    rgba(201,168,76,.48);
+  --gold-line:   rgba(201,168,76,.24);
+  --cream:       #f5f2ed;
+  --cream-mid:   rgba(245,242,237,.62);
+  --cream-dim:   rgba(245,242,237,.28);
+  --border:      rgba(245,242,237,.08);
+  --border-gold: rgba(201,168,76,.18);
+  --ease:        cubic-bezier(0.22,1,0.36,1);
+  --ease-in:     cubic-bezier(0.55,0,1,0.45);
+}
+
+/* ══════════════════════════════════════════════════
+   RESET
+══════════════════════════════════════════════════ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100%; }
+body {
+  font-family:'Inter',sans-serif;
+  background:var(--navy);
+  color:var(--cream);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button { border:none; background:none; font:inherit; color:inherit; cursor:pointer; }
+textarea,input { font:inherit; }
+
+/* ══════════════════════════════════════════════════
+   AMBIENT BACKGROUND
+══════════════════════════════════════════════════ */
+.bg-orb {
+  position:fixed;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:0;
+  filter:blur(90px);
+  transition:all 1.8s var(--ease);
+}
+.bg-orb-1 {
+  width:600px; height:500px;
+  background:rgba(30,50,80,.45);
+  top:-100px; left:-80px;
+}
+.bg-orb-2 {
+  width:400px; height:380px;
+  background:rgba(201,168,76,.04);
+  bottom:0; right:-60px;
+}
+
+/* ══════════════════════════════════════════════════
+   PROGRESS
+══════════════════════════════════════════════════ */
+#progress-bar {
+  position:fixed;
+  top:0; left:0; right:0;
+  height:1.5px;
+  background:rgba(255,255,255,.06);
+  z-index:200;
+}
+#progress-fill {
+  height:100%;
+  background:linear-gradient(90deg, var(--gold-dim), var(--gold));
+  width:0%;
+  transition:width .7s var(--ease);
+}
+
+/* ══════════════════════════════════════════════════
+   LOGO NAV BAR
+══════════════════════════════════════════════════ */
+#top-bar {
+  position:fixed;
+  top:0; left:0; right:0;
+  padding:20px 40px;
+  z-index:150;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(-8px);
+  transition:opacity .6s var(--ease), transform .6s var(--ease);
+}
+#top-bar.visible { opacity:1; transform:none; pointer-events:all; }
+#top-logo {
+  height:84px;
+  width:auto;
+  max-width:300px;
+  object-fit:contain;
+  opacity:.9;
+}
+
+/* ══════════════════════════════════════════════════
+   SCREENS
+══════════════════════════════════════════════════ */
+.screen {
+  position:fixed;
+  inset:0;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(30px);
+  transition:opacity .6s var(--ease), transform .6s var(--ease);
+  overflow-y:auto;
+}
+.screen.active {
+  opacity:1;
+  pointer-events:all;
+  transform:none;
+}
+.screen.out-up {
+  opacity:0;
+  transform:translateY(-30px);
+  transition:opacity .4s var(--ease-in), transform .4s var(--ease-in);
+}
+.screen.out-down {
+  opacity:0;
+  transform:translateY(30px);
+  transition:opacity .4s var(--ease-in), transform .4s var(--ease-in);
+}
+
+/* ══════════════════════════════════════════════════
+   WELCOME SCREEN
+══════════════════════════════════════════════════ */
+.welcome-grid {
+  display:grid;
+  grid-template-columns:1fr 480px;
+  gap:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+#s0, #s11 {
+  padding:0;
+}
+.rim-frame {
+  position:fixed;
+  inset:0;
+  border:4px solid var(--gold);
+  pointer-events:none;
+  z-index:1000;
+}
+.welcome-left {
+  padding:70px 68px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+/* Logo: never stretch — contain within natural proportions */
+.welcome-logo {
+  width:auto;
+  height:auto;
+  max-height:70px;
+  max-width:280px;
+  object-fit:contain;
+  object-position:left center;
+  margin-bottom:40px;
+  opacity:.92;
+}
+.ty-welcome-logo {
+  width:auto;
+  height:auto;
+  max-height:96px;
+  max-width:320px;
+  object-fit:contain;
+  object-position:left center;
+  margin-bottom:40px;
+  opacity:.98;
+  filter: drop-shadow(0 0 16px rgba(201,168,76,.18));
+}
+.welcome-eyebrow {
+  font-size:.62rem;
+  letter-spacing:.34em;
+  text-transform:uppercase;
+  color:var(--gold-dim);
+  margin-bottom:18px;
+}
+.welcome-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(3rem,5.5vw,4.8rem);
+  font-weight:500;
+  line-height:1.06;
+  letter-spacing:-.015em;
+  color:var(--cream);
+  margin-bottom:22px;
+}
+.welcome-title em { font-style:italic; color:var(--gold); }
+.welcome-divider {
+  width:36px; height:1px;
+  background:linear-gradient(90deg,var(--gold-dim),transparent);
+  margin-bottom:22px;
+}
+.welcome-sub {
+  font-size:.95rem;
+  color:var(--cream-mid);
+  line-height:1.88;
+  font-weight:300;
+  max-width:420px;
+  margin-bottom:44px;
+}
+/* Photo column wrapper — holds image + gradient fade overlay */
+.welcome-photo-col {
+  position:relative;
+  overflow:hidden;
+  min-height:460px;
+}
+.welcome-photo {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  display:block;
+  filter:brightness(.88) contrast(1.06) saturate(1.05);
+}
+/* Gradient blends left edge and bottom into the navy background */
+.welcome-photo-col::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(to right,  var(--navy) 0%, transparent 28%),
+    linear-gradient(to top,    var(--navy) 0%, transparent 25%),
+    linear-gradient(to bottom, rgba(13,27,42,.45) 0%, transparent 18%);
+  pointer-events:none;
+}
+
+/* ══════════════════════════════════════════════════
+   LANGUAGE
+══════════════════════════════════════════════════ */
+.lang-wrap {
+  max-width:440px;
+  width:100%;
+  text-align:center;
+}
+.section-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.9rem,4vw,2.8rem);
+  font-weight:500;
+  letter-spacing:-.01em;
+  margin-bottom:10px;
+}
+.section-sub {
+  font-size:.84rem;
+  color:var(--cream-mid);
+  font-weight:300;
+  margin-bottom:36px;
+}
+.lang-grid {
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:40px;
+}
+.lang-btn {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--border);
+  padding:18px 24px;
+  min-width:118px;
+  background:rgba(245,242,237,.025);
+  transition:border-color .25s, background .25s, box-shadow .25s;
+}
+.lang-btn:hover,
+.lang-btn.sel {
+  border-color:var(--gold-dim);
+  background:var(--gold-soft);
+  box-shadow:0 0 22px rgba(201,168,76,.07);
+}
+.lang-flag { font-size:1.7rem; line-height:1; }
+.lang-name {
+  font-size:.64rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--cream-mid);
+  transition:color .22s;
+}
+.lang-btn.sel .lang-name { color:var(--gold); }
+
+/* ══════════════════════════════════════════════════
+   QUESTION SCREEN WRAPPER
+══════════════════════════════════════════════════ */
+.q-wrap {
+  max-width:760px;
+  width:100%;
+}
+.q-step {
+  font-size:.56rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--gold-dim);
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.q-step-line {
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,var(--border-gold),transparent);
+}
+.q-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,5vw,3.6rem);
+  font-weight:500;
+  line-height:1.2;
+  letter-spacing:-.015em;
+  margin-bottom:44px;
+}
+.q-title em { font-style:italic; color:var(--gold); }
+
+/* ══════════════════════════════════════════════════
+   NAME INPUTS
+══════════════════════════════════════════════════ */
+.name-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  margin-bottom:36px;
+}
+.field {
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+.field-label {
+  font-size:.56rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--cream-dim);
+  margin-bottom:10px;
+  transition:color .22s;
+}
+.field:focus-within .field-label { color:var(--gold-dim); }
+.field-input {
+  background:transparent;
+  border:none;
+  border-bottom:1px solid var(--border);
+  padding:10px 0 10px;
+  color:var(--cream);
+  font-size:1.12rem;
+  font-weight:300;
+  outline:none;
+  width:100%;
+  caret-color:var(--gold);
+  transition:border-color .25s;
+  letter-spacing:.02em;
+}
+.field-input::placeholder { color:rgba(245,242,237,.2); font-size:.95rem; }
+.field-input:focus { border-color:var(--gold-dim); }
+/* Animated focus underline */
+.field::after {
+  content:'';
+  position:absolute;
+  bottom:0; left:0;
+  width:0; height:1px;
+  background:var(--gold-dim);
+  transition:width .35s var(--ease);
+}
+.field:focus-within::after { width:100%; }
+
+/* ══════════════════════════════════════════════════
+   LOCATION CARDS
+══════════════════════════════════════════════════ */
+.loc-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:36px;
+}
+.loc-card {
+  border:1px solid var(--border);
+  padding:18px 20px;
+  background:rgba(245,242,237,.02);
+  text-align:left;
+  transition:border-color .25s, background .25s;
+  position:relative;
+  overflow:hidden;
+}
+.loc-card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,var(--gold-soft),transparent 60%);
+  opacity:0;
+  transition:opacity .28s;
+}
+.loc-card:hover::before,
+.loc-card.sel::before { opacity:1; }
+.loc-card:hover,
+.loc-card.sel { border-color:var(--gold-dim); }
+.loc-city {
+  display:block;
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.25rem;
+  font-weight:500;
+  color:var(--cream);
+  margin-bottom:2px;
+  position:relative;
+}
+.loc-state {
+  font-size:.6rem;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--cream-dim);
+  position:relative;
+}
+.loc-card.sel .loc-state { color:var(--gold-dim); }
+
+/* ══════════════════════════════════════════════════
+   STAR RATING — SINGLE QUESTION SLIDE
+══════════════════════════════════════════════════ */
+.star-single-wrap {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  margin-bottom:36px;
+}
+.stars-row {
+  display:flex;
+  gap:12px;
+  margin-bottom:16px;
+}
+.star {
+  cursor:pointer;
+  padding:4px;
+  transition:transform .2s var(--ease);
+}
+.star:hover { transform:scale(1.12); }
+.star svg {
+  width:48px; height:48px;
+  display:block;
+}
+.star-shape {
+  fill:transparent;
+  stroke:var(--border-gold);
+  stroke-width:1.5;
+  transition:fill .25s var(--ease), stroke .25s var(--ease);
+}
+.star.lit .star-shape {
+  fill:var(--gold);
+  stroke:var(--gold);
+}
+.star.hover-active .star-shape {
+  fill:rgba(201,168,76,.35);
+  stroke:var(--gold-dim);
+}
+.star-feedback {
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;
+  font-style:italic;
+  color:var(--gold-dim);
+  min-height:1.5em;
+  transition:opacity .22s, transform .22s var(--ease);
+  letter-spacing:.02em;
+}
+.star-feedback.pop {
+  animation:starPop .28s var(--ease);
+}
+@keyframes starPop {
+  0%  { transform:translateY(4px); opacity:0; }
+  100%{ transform:none; opacity:1; }
+}
+
+/* ══════════════════════════════════════════════════
+   FINAL THOUGHTS
+══════════════════════════════════════════════════ */
+.thoughts-wrap {
+  position:relative;
+  margin-bottom:36px;
+}
+.thoughts-input {
+  width:100%;
+  background:rgba(245,242,237,.03);
+  border:1px solid var(--border);
+  padding:18px 22px;
+  color:var(--cream);
+  font-size:.95rem;
+  font-weight:300;
+  line-height:1.8;
+  outline:none;
+  resize:none;
+  min-height:170px;
+  caret-color:var(--gold);
+  transition:border-color .25s;
+}
+.thoughts-input::placeholder { color:rgba(245,242,237,.22); }
+.thoughts-input:focus { border-color:var(--gold-line); }
+.thoughts-char {
+  position:absolute;
+  bottom:12px; right:16px;
+  font-size:.6rem;
+  color:var(--cream-dim);
+  letter-spacing:.06em;
+  pointer-events:none;
+}
+
+/* ══════════════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════════════ */
+.nav-row {
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.btn-continue {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--gold-line);
+  color:var(--cream);
+  font-size:.72rem;
+  font-weight:500;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  padding:14px 28px;
+  width:max-content;
+  position:relative;
+  overflow:hidden;
+  transition:border-color .28s, color .28s, box-shadow .28s;
+}
+.btn-continue::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,var(--gold-soft),transparent 55%);
+  opacity:0;
+  transition:opacity .28s;
+}
+.btn-continue:hover {
+  border-color:var(--gold);
+  color:var(--gold);
+  box-shadow:0 0 24px rgba(201,168,76,.1);
+}
+.btn-continue:hover::before { opacity:1; }
+.btn-continue span,.btn-continue .arr { position:relative; }
+.btn-back {
+  font-size:.66rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--cream-dim);
+  padding:4px 0;
+  transition:color .22s;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.btn-back:hover { color:var(--cream-mid); }
+
+/* ══════════════════════════════════════════════════
+   THANK YOU SCREEN
+══════════════════════════════════════════════════ */
+.ty-inner {
+  text-align:center;
+  max-width:560px;
+}
+.ty-logo {
+  height:52px;
+  width:auto;
+  margin:0 auto 36px;
+  opacity:.88;
+}
+.ty-photo-wrap {
+  width:80px; height:80px;
+  border-radius:50%;
+  overflow:hidden;
+  margin:0 auto 28px;
+  border:1px solid var(--border-gold);
+}
+.ty-photo {
+  width:100%; height:100%;
+  object-fit:cover;
+  object-position:center top;
+}
+.ty-name-recipient {
+  font-size:.6rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--gold-dim);
+  margin-bottom:16px;
+}
+.ty-title {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,5vw,3.4rem);
+  font-weight:500;
+  line-height:1.1;
+  margin-bottom:18px;
+  letter-spacing:-.01em;
+}
+.ty-title em { font-style:italic; color:var(--gold); }
+.ty-divider {
+  width:32px; height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);
+  margin:0 auto 22px;
+}
+.ty-sub {
+  font-size:.9rem;
+  color:var(--cream-mid);
+  line-height:1.85;
+  font-weight:300;
+  max-width:400px;
+  margin:0 auto 28px;
+}
+.ty-sig {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:1.1rem;
+  color:var(--gold-dim);
+}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+@media (max-width:900px) {
+  .welcome-grid { grid-template-columns:1fr 340px; }
+}
+@media (max-width:760px) {
+  .welcome-grid { grid-template-columns:1fr; min-height:100vh; height:auto; }
+  .welcome-photo-col { min-height:280px; max-height:320px; }
+  .welcome-photo-col::after {
+    background:
+      linear-gradient(to top, var(--navy) 0%, transparent 30%),
+      linear-gradient(to bottom, rgba(13,27,42,.5) 0%, transparent 20%);
+  }
+  .welcome-left { padding:40px 32px; }
+  .name-grid { grid-template-columns:1fr; }
+  .loc-grid  { grid-template-columns:1fr; }
+}
+@media (max-width:480px) {
+  .welcome-left { padding:32px 24px; }
+  .stars-row { gap:8px; }
+  .star svg { width:38px; height:38px; }
+  #top-bar { padding:16px 24px; }
+  #top-logo { height:52px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Rim frame outline -->
+<div class="rim-frame"></div>
+
+<!-- Ambient orbs -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<!-- Progress -->
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<!-- Top logo bar (appears after welcome) -->
+<div id="top-bar">
+  <img id="top-logo"
+    src="Website/logo-transparent.png"
+    alt="Liliane Dorjo Real Estate"/>
+</div>
+
+<!-- ══ S0: WELCOME ══════════════════════════════════════ -->
+<div class="screen active" id="s0">
+  <div class="welcome-grid">
+    <div class="welcome-left">
+      <img class="welcome-logo"
+        src="Website/logo-transparent.png"
+        alt="Liliane Dorjo Real Estate"/>
+      <p class="welcome-eyebrow" data-k="eyebrow">Client Experience</p>
+      <h1 class="welcome-title" data-k="w-title">Your experience matters <em>deeply.</em></h1>
+      <div class="welcome-divider"></div>
+      <p class="welcome-sub" data-k="w-sub">A brief, private questionnaire to help Lilian understand how she served you — and how she can continue to raise the standard for every client.</p>
+      <button class="btn-continue" onclick="goTo(1)">
+        <span data-k="begin">Begin</span><span class="arr">→</span>
+      </button>
+    </div>
+    <div class="welcome-photo-col">
+      <img class="welcome-photo"
+        src="Website/lilian-photo.jpg"
+        alt="Lilian Dorjo"/>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S1: LANGUAGE ═════════════════════════════════════ -->
+<div class="screen" id="s1">
+  <div class="lang-wrap">
+    <h2 class="section-title" data-k="lang-title">Select your language</h2>
+    <p class="section-sub" data-k="lang-sub">Choose the language you'd like to continue in.</p>
+    <div class="lang-grid">
+      <button class="lang-btn sel" id="lb-en" onclick="setLang('en')">
+        <span class="lang-flag">🇺🇸</span>
+        <span class="lang-name">English</span>
+      </button>
+      <button class="lang-btn" id="lb-es" onclick="setLang('es')">
+        <span class="lang-flag">🇪🇸</span>
+        <span class="lang-name">Español</span>
+      </button>
+      <button class="lang-btn" id="lb-pt" onclick="setLang('pt')">
+        <span class="lang-flag">🇧🇷</span>
+        <span class="lang-name">Português</span>
+      </button>
+    </div>
+    <div class="nav-row" style="justify-content:center;">
+      <button class="btn-back" onclick="goTo(0,'down')">← <span data-k="back">Back</span></button>
+      <button class="btn-continue" onclick="goTo(2)">
+        <span data-k="continue">Continue</span><span class="arr">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S2: NAME ══════════════════════════════════════════ -->
+<div class="screen" id="s2">
+  <div class="q-wrap">
+    <p class="q-step"><span data-k="q-of">Question</span>&nbsp;1 <span class="q-step-line"></span></p>
+    <h2 class="q-title" data-k="q1">What is your <em>name?</em></h2>
+    <div class="name-grid">
+      <div class="field">
+        <label class="field-label" for="fn" data-k="first">First Name</label>
+        <input class="field-input" id="fn" type="text" autocomplete="given-name"/>
+      </div>
+      <div class="field">
+        <label class="field-label" for="ln" data-k="last">Last Name</label>
+        <input class="field-input" id="ln" type="text" autocomplete="family-name"/>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(1,'down')">← <span data-k="back">Back</span></button>
+      <button class="btn-continue" onclick="valName()">
+        <span data-k="continue">Continue</span><span class="arr">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S3: LOCATION ══════════════════════════════════════ -->
+<div class="screen" id="s3">
+  <div class="q-wrap">
+    <p class="q-step"><span data-k="q-of">Question</span>&nbsp;2 <span class="q-step-line"></span></p>
+    <h2 class="q-title" data-k="q2">Where did your transaction take <em>place?</em></h2>
+    <div class="loc-grid">
+      <button class="loc-card" onclick="selLoc(this,'Torrington, CT')">
+        <span class="loc-city">Torrington</span>
+        <span class="loc-state">Connecticut</span>
+      </button>
+      <button class="loc-card" onclick="selLoc(this,'Waterbury, CT')">
+        <span class="loc-city">Waterbury</span>
+        <span class="loc-state">Connecticut</span>
+      </button>
+      <button class="loc-card" onclick="selLoc(this,'Bridgeport, CT')">
+        <span class="loc-city">Bridgeport</span>
+        <span class="loc-state">Connecticut</span>
+      </button>
+      <button class="loc-card" onclick="selLoc(this,'Watertown, CT')">
+        <span class="loc-city">Watertown</span>
+        <span class="loc-state">Connecticut</span>
+      </button>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(2,'down')">← <span data-k="back">Back</span></button>
+      <button class="btn-continue" onclick="valLoc()">
+        <span data-k="continue">Continue</span><span class="arr">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S4–S9: INDIVIDUAL STAR QUESTIONS ══════════════════ -->
+<!-- Generated dynamically — placeholder divs -->
+<div class="screen" id="s4"></div>
+<div class="screen" id="s5"></div>
+<div class="screen" id="s6"></div>
+<div class="screen" id="s7"></div>
+<div class="screen" id="s8"></div>
+<div class="screen" id="s9"></div>
+
+<!-- ══ S10: FINAL THOUGHTS ═══════════════════════════════ -->
+<div class="screen" id="s10">
+  <div class="q-wrap">
+    <p class="q-step"><span data-k="q-of">Question</span>&nbsp;9 <span class="q-step-line"></span></p>
+    <h2 class="q-title" data-k="q9">Any final <em>thoughts?</em></h2>
+    <div class="thoughts-wrap">
+      <textarea class="thoughts-input" id="thoughts" rows="6"
+        oninput="updateChar()"
+        maxlength="800"></textarea>
+      <span class="thoughts-char" id="char-count">0 / 800</span>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo(9,'down')">← <span data-k="back">Back</span></button>
+      <button class="btn-continue" onclick="submitForm()">
+        <span data-k="submit">Submit</span><span class="arr">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s11">
+  <div class="welcome-grid">
+    <div class="welcome-left">
+      <img class="ty-welcome-logo"
+        src="Website/logo-transparent.png"
+        alt="Liliane Dorjo Real Estate"/>
+      <p class="welcome-eyebrow" id="ty-name-line"></p>
+      <h1 class="welcome-title" data-k="ty-title">Thank you for your <em>time.</em></h1>
+      <div class="welcome-divider"></div>
+      <p class="welcome-sub" id="ty-paragraph"></p>
+      <p class="ty-sig" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.4rem; color:var(--gold); margin-top:20px;">— Lilian Dorjo</p>
+    </div>
+    <div class="welcome-photo-col">
+      <img class="welcome-photo"
+        src="Website/lilian-photo.jpg"
+        alt="Lilian Dorjo"/>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════
+   TRANSLATIONS
+════════════════════════════════════════════════ */
+const T = {
+  en:{
+    eyebrow:'Client Experience', 'w-title':'Your experience matters deeply.',
+    'w-sub':'A brief, private questionnaire to help Lilian understand how she served you — and how she can continue to raise the standard for every client.',
+    begin:'Begin','lang-title':'Select your language','lang-sub':"Choose the language you'd like to continue in.",
+    continue:'Continue',back:'Back','q-of':'Question',
+    q1:'What is your name?',first:'First Name',last:'Last Name',
+    q2:'Where did your transaction take place?',
+    q9:'Any final thoughts?',
+    'thoughts-ph':"In your own words — share anything you'd like Lilian to know. Your response may be used as a review.",
+    submit:'Submit','ty-title':'Thank you for your time.',
+    'ty-sub':'It was a true pleasure working with you. Lilian is grateful for the trust you placed in her and looks forward to serving you again.',
+    'ty-for':'Thank you,',
+    'star-labels':['Overall experience with Lilian','Response time & availability','Clarity throughout the process','Smoothness from start to finish','Level of trust throughout','Satisfaction with the outcome'],
+    'star-desc':['','Poor','Fair','Good','Great','Excellent'],
+    'q-star-title':['How was your overall experience with <em>Lilian?</em>','How was Lilian\'s <em>response time?</em>','How clear was Lilian throughout the <em>process?</em>','How smoothly did the process go from <em>start to finish?</em>','How much did you <em>trust</em> Lilian throughout?','Are you satisfied with the <em>outcome</em> of your transaction?'],
+  },
+  es:{
+    eyebrow:'Experiencia del Cliente','w-title':'Tu experiencia importa profundamente.',
+    'w-sub':'Un breve cuestionario privado para ayudar a Lilian a entender cómo te sirvió — y cómo puede seguir elevando el estándar.',
+    begin:'Comenzar','lang-title':'Selecciona tu idioma','lang-sub':'Elige el idioma en el que deseas continuar.',
+    continue:'Continuar',back:'Atrás','q-of':'Pregunta',
+    q1:'¿Cuál es tu nombre?',first:'Nombre',last:'Apellido',
+    q2:'¿Dónde se realizó tu transacción?',
+    q9:'¿Algún pensamiento final?',
+    'thoughts-ph':'Con tus propias palabras — comparte lo que quieras que Lilian sepa. Tu respuesta puede usarse como reseña.',
+    submit:'Enviar','ty-title':'Gracias por tu tiempo.',
+    'ty-sub':'Fue un verdadero placer trabajar contigo. Lilian agradece la confianza que depositaste en ella y espera volverte a servir.',
+    'ty-for':'Gracias,',
+    'star-labels':['Experiencia general con Lilian','Tiempo de respuesta y disponibilidad','Claridad durante el proceso','Fluidez de principio a fin','Nivel de confianza durante el proceso','Satisfacción con el resultado'],
+    'star-desc':['','Deficiente','Regular','Bueno','Muy bueno','Excelente'],
+    'q-star-title':['¿Cómo fue tu experiencia general con <em>Lilian?</em>','¿Cómo fue el <em>tiempo de respuesta</em> de Lilian?','¿Qué tan clara fue Lilian durante el <em>proceso?</em>','¿Qué tan fluido fue el proceso de <em>principio a fin?</em>','¿Cuánto <em>confiaste</em> en Lilian durante el proceso?','¿Estás satisfecho/a con el <em>resultado</em> de tu transacción?'],
+  },
+  pt:{
+    eyebrow:'Experiência do Cliente','w-title':'Sua experiência é muito importante.',
+    'w-sub':'Um breve questionário privado para ajudar Lilian a entender como ela te atendeu — e como pode continuar elevando o padrão.',
+    begin:'Começar','lang-title':'Selecione seu idioma','lang-sub':'Escolha o idioma em que deseja continuar.',
+    continue:'Continuar',back:'Voltar','q-of':'Pergunta',
+    q1:'Qual é o seu nome?',first:'Nome',last:'Sobrenome',
+    q2:'Onde sua transação ocorreu?',
+    q9:'Algum pensamento final?',
+    'thoughts-ph':'Com suas próprias palavras — compartilhe o que quiser que Lilian saiba. Sua resposta pode ser usada como avaliação.',
+    submit:'Enviar','ty-title':'Obrigado pelo seu tempo.',
+    'ty-sub':'Foi um verdadeiro prazer trabalhar com você. Lilian é grata pela confiança que você depositou nela e espera servi-la novamente.',
+    'ty-for':'Obrigada,',
+    'star-labels':['Experiência geral com Lilian','Tempo de resposta e disponibilidade','Clareza ao longo do processo','Fluidez do início ao fim','Nível de confiança ao longo do processo','Satisfação com o resultado'],
+    'star-desc':['','Ruim','Regular','Bom','Ótimo','Excelente'],
+    'q-star-title':['Como foi sua experiência geral com <em>Lilian?</em>','Como foi o <em>tempo de resposta</em> de Lilian?','Quão clara foi Lilian ao longo do <em>processo?</em>','Quão fluido foi o processo do <em>início ao fim?</em>','O quanto você <em>confiou</em> em Lilian?','Você está satisfeito/a com o <em>resultado</em> da transação?'],
+  },
+};
+
+/* ════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════ */
+const state = {
+  lang:'en', cur:0,
+  first:'', last:'', loc:'',
+  stars:[0,0,0,0,0,0],
+  thoughts:'',
+  startTime:Date.now(),
+};
+const TOTAL = 12; // screens 0-11
+
+/* ════════════════════════════════════════════════
+   LANGUAGE
+════════════════════════════════════════════════ */
+function setLang(l) {
+  state.lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('lb-'+l).classList.add('sel');
+  applyT();
+  renderStarScreens();
+}
+
+function applyT() {
+  const t = T[state.lang];
+  document.querySelectorAll('[data-k]').forEach(el=>{
+    const k=el.getAttribute('data-k');
+    if(t[k]!==undefined) el.innerHTML=t[k];
+  });
+  const ta=document.getElementById('thoughts');
+  if(ta) ta.placeholder=t['thoughts-ph']||'';
+}
+
+/* ════════════════════════════════════════════════
+   BUILD STAR SCREENS (S4–S9)
+════════════════════════════════════════════════ */
+function renderStarScreens() {
+  const t=T[state.lang];
+  for(let qi=0;qi<6;qi++){
+    const sid=`s${qi+4}`;
+    const screen=document.getElementById(sid);
+    const qNum=qi+3;
+    screen.innerHTML=`
+      <div class="q-wrap">
+        <p class="q-step"><span>${t['q-of']}</span>&nbsp;${qNum} <span class="q-step-line"></span></p>
+        <h2 class="q-title">${t['q-star-title'][qi]}</h2>
+        <div class="star-single-wrap">
+          <div class="stars-row" id="stars-${qi}">
+            ${[1,2,3,4,5].map(n=>`
+              <button class="star${state.stars[qi]>=n?' lit':''}"
+                onmouseenter="hov(${qi},${n})"
+                onmouseleave="unhov(${qi})"
+                onclick="setStar(${qi},${n},${qi+4})"
+                aria-label="${n} star">
+                <svg viewBox="0 0 24 24">
+                  <polygon class="star-shape" points="12,2.5 14.8,9 22,9.8 16.8,14.6 18.5,21.5 12,18 5.5,21.5 7.2,14.6 2,9.8 9.2,9"/>
+                </svg>
+              </button>`).join('')}
+          </div>
+          <p class="star-feedback" id="sf-${qi}">${state.stars[qi]>0?t['star-desc'][state.stars[qi]]:''}</p>
+        </div>
+        <div class="nav-row">
+          <button class="btn-back" onclick="goTo(${qi+3},'down')">← ${t.back}</button>
+          <button class="btn-continue" onclick="valStar(${qi},${qi+4})">
+            ${t.continue}<span class="arr">→</span>
+          </button>
+        </div>
+      </div>`;
+  }
+}
+
+function hov(qi,n) {
+  const row=document.getElementById('stars-'+qi);
+  row.querySelectorAll('.star').forEach((s,i)=>{
+    s.classList.remove('hover-active');
+    if(i<n && state.stars[qi]===0) s.classList.add('hover-active');
+  });
+}
+function unhov(qi) {
+  document.getElementById('stars-'+qi)
+    .querySelectorAll('.star').forEach(s=>s.classList.remove('hover-active'));
+}
+function setStar(qi,val,nextScreen) {
+  state.stars[qi]=val;
+  refreshStarRow(qi);
+}
+function refreshStarRow(qi) {
+  const t=T[state.lang];
+  const row=document.getElementById('stars-'+qi);
+  if(!row) return;
+  row.querySelectorAll('.star').forEach((s,i)=>{
+    s.classList.toggle('lit',i<state.stars[qi]);
+    s.classList.remove('hover-active');
+  });
+  const fb=document.getElementById('sf-'+qi);
+  if(fb){
+    fb.textContent = state.stars[qi]>0 ? t['star-desc'][state.stars[qi]] : '';
+    fb.classList.remove('pop');
+    void fb.offsetWidth;
+    fb.classList.add('pop');
+  }
+}
+function valStar(qi,curScreen) {
+  if(state.stars[qi]===0){ shake(`s${curScreen}`); return; }
+  goTo(curScreen+1);
+}
+
+/* ════════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════════ */
+function goTo(n, dir='up') {
+  const cur=document.getElementById('s'+state.cur);
+  const nxt=document.getElementById('s'+n);
+  if(!nxt) return;
+
+  cur.classList.add(dir==='up'?'out-up':'out-down');
+  cur.classList.remove('active');
+  setTimeout(()=>cur.classList.remove('out-up','out-down'),500);
+
+  setTimeout(()=>{
+    nxt.classList.add('active');
+    state.cur=n;
+    updateProgress();
+    updateTopBar();
+    const inp=nxt.querySelector('input,textarea');
+    if(inp) setTimeout(()=>inp.focus(),180);
+  },200);
+}
+
+function updateProgress() {
+  document.getElementById('progress-fill').style.width =
+    (state.cur/(TOTAL-1)*100)+'%';
+}
+
+function updateTopBar() {
+  document.getElementById('top-bar').classList.toggle('visible', state.cur>0 && state.cur<11);
+}
+
+/* ════════════════════════════════════════════════
+   VALIDATION
+════════════════════════════════════════════════ */
+function valName() {
+  const f=document.getElementById('fn').value.trim();
+  const l=document.getElementById('ln').value.trim();
+  if(!f||!l){ shake('s2'); return; }
+  state.first=f; state.last=l;
+  goTo(3);
+}
+function selLoc(btn,loc) {
+  document.querySelectorAll('.loc-card').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  state.loc=loc;
+}
+function valLoc() {
+  if(!state.loc){ shake('s3'); return; }
+  goTo(4);
+}
+function shake(id) {
+  const el=document.getElementById(id);
+  let dx=[0,-10,10,-7,7,-4,4,0];
+  dx.forEach((v,i)=>setTimeout(()=>{ el.style.transform=`translateX(${v}px)`; },i*45));
+  setTimeout(()=>el.style.transform='',dx.length*45+50);
+}
+
+/* ════════════════════════════════════════════════
+   CHAR COUNTER
+════════════════════════════════════════════════ */
+function updateChar(){
+  const ta=document.getElementById('thoughts');
+  document.getElementById('char-count').textContent=ta.value.length+' / 800';
+}
+
+/* ════════════════════════════════════════════════
+   SUBMIT
+════════════════════════════════════════════════ */
+async function submitForm() {
+  state.thoughts=document.getElementById('thoughts').value.trim();
+  state.fillSec=Math.round((Date.now()-state.startTime)/1000);
+
+  // Show thank-you name line (first name only)
+  const t=T[state.lang];
+  const nameLine=document.getElementById('ty-name-line');
+  if(nameLine) nameLine.textContent=`${t['ty-for']} ${state.first}`;
+
+  // Custom paragraph with dynamic first name
+  const tyParagraph = document.getElementById('ty-paragraph');
+  if(tyParagraph) {
+    const copy = {
+      en: `It was a true pleasure working with you, ${state.first}. Lilian is grateful for the trust you placed in her and looks forward to serving you again.`,
+      es: `Fue un verdadero placer trabajar contigo, ${state.first}. Lilian agradece la confianza que depositaste en ella y espera volverte a servir.`,
+      pt: `Foi um verdadeiro prazer trabalhar com você, ${state.first}. Lilian é grata pela confiança que você depositou nela e espera servi-la novamente.`
+    };
+    tyParagraph.textContent = copy[state.lang] || copy['en'];
+  }
+
+  applyT(); // re-apply translations to end screen
+
+  const payload={
+    firstName:state.first, lastName:state.last,
+    language:state.lang,   location:state.loc,
+    stars:state.stars,     thoughts:state.thoughts,
+    fillSeconds:state.fillSec,
+    submittedAt:new Date().toISOString(),
+  };
+
+  try {
+    await fetch('/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+    });
+  } catch(e) {
+    const s=JSON.parse(localStorage.getItem('ld_r')||'[]');
+    s.push(payload);
+    localStorage.setItem('ld_r',JSON.stringify(s));
+  }
+
+  goTo(11);
+}
+
+/* ════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════ */
+renderStarScreens();
+applyT();
+</script>
+</body>
+</html>
