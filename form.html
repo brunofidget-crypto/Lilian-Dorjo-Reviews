@@ -221,6 +221,17 @@ textarea,input { font:inherit; }
   max-width:420px;
   margin-bottom:44px;
 }
+#ty-paragraph {
+  font-family:'Cormorant Garamond', serif;
+  font-size: 1.22rem;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 2;
+  color: var(--cream);
+  letter-spacing: 0.01em;
+  max-width: 420px;
+  margin-bottom: 44px;
+}
 /* Photo column wrapper — holds image + gradient fade overlay */
 .welcome-photo-col {
   position:relative;
@@ -689,7 +700,7 @@ textarea,input { font:inherit; }
       <p class="welcome-eyebrow" data-k="eyebrow">Client Experience</p>
       <h1 class="welcome-title" data-k="w-title">Your experience matters <em>deeply.</em></h1>
       <div class="welcome-divider"></div>
-      <p class="welcome-sub" data-k="w-sub">A brief, private questionnaire to help Lilian understand how she served you — and how she can continue to raise the standard for every client.</p>
+      <p class="welcome-sub" data-k="w-sub">A brief, private questionnaire to help Lilian understand how she served you and how she can continue to raise the standard for every client.</p>
       <button class="btn-continue" onclick="goTo(1)">
         <span data-k="begin">Begin</span><span class="arr">→</span>
       </button>
@@ -840,7 +851,7 @@ textarea,input { font:inherit; }
 const T = {
   en:{
     eyebrow:'Client Experience', 'w-title':'Your experience matters deeply.',
-    'w-sub':'A brief, private questionnaire to help Lilian understand how she served you — and how she can continue to raise the standard for every client.',
+    'w-sub':'A brief, private questionnaire to help Lilian understand how she served you and how she can continue to raise the standard for every client.',
     begin:'Begin','lang-title':'Select your language','lang-sub':"Choose the language you'd like to continue in.",
     continue:'Continue',back:'Back','q-of':'Question',
     q1:'What is your name?',first:'First Name',last:'Last Name',
@@ -856,7 +867,7 @@ const T = {
   },
   es:{
     eyebrow:'Experiencia del Cliente','w-title':'Tu experiencia importa profundamente.',
-    'w-sub':'Un breve cuestionario privado para ayudar a Lilian a entender cómo te sirvió — y cómo puede seguir elevando el estándar.',
+    'w-sub':'Un breve cuestionario privado para ayudar a Lilian a entender cómo te sirvió y cómo puede seguir elevando el estándar.',
     begin:'Comenzar','lang-title':'Selecciona tu idioma','lang-sub':'Elige el idioma en el que deseas continuar.',
     continue:'Continuar',back:'Atrás','q-of':'Pregunta',
     q1:'¿Cuál es tu nombre?',first:'Nombre',last:'Apellido',
@@ -872,7 +883,7 @@ const T = {
   },
   pt:{
     eyebrow:'Experiência do Cliente','w-title':'Sua experiência é muito importante.',
-    'w-sub':'Um breve questionário privado para ajudar Lilian a entender como ela te atendeu — e como pode continuar elevando o padrão.',
+    'w-sub':'Um breve questionário privado para ajudar Lilian a entender como ela te atendeu e como pode continuar elevando o padrão.',
     begin:'Começar','lang-title':'Selecione seu idioma','lang-sub':'Escolha o idioma em que deseja continuar.',
     continue:'Continuar',back:'Voltar','q-of':'Pergunta',
     q1:'Qual é o seu nome?',first:'Nome',last:'Sobrenome',
