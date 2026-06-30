@@ -15,7 +15,7 @@ BASE_DIR     = Path(__file__).parent
 PORT         = int(os.environ.get("PORT", 8080))
 LILIAN_EMAIL = "Liliandrealtor25@gmail.com"
 SHEET_ID     = os.environ.get("GOOGLE_SHEET_ID", "1Ut51gVmWf4b6pZ-1HyTQ857aLiY9aysLISca2hJVAhg")
-SA_JSON      = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "")  # full JSON string on Railway
+GOOGLE_SA_B64 = os.environ.get("GOOGLE_SA_B64", "")  # base64-encoded service account JSON
 
 SMTP_HOST = os.environ.get("EMAIL_HOST",     "smtp.gmail.com")
 SMTP_PORT = int(os.environ.get("EMAIL_PORT", 587))
@@ -31,6 +31,7 @@ SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}"
 # ─── Google Sheets client ───────────────────────────────────────────────────
 def _sheets_client():
     try:
+        import base64
         import gspread
         from google.oauth2.service_account import Credentials
 
@@ -39,22 +40,25 @@ def _sheets_client():
             "https://www.googleapis.com/auth/drive",
         ]
 
-        if SA_JSON:
-            # Railway: credentials stored as env var JSON string
-            info = json.loads(SA_JSON)
+        if GOOGLE_SA_B64:
+            # Railway: decode base64 → JSON
+            decoded = base64.b64decode(GOOGLE_SA_B64).decode("utf-8")
+            info = json.loads(decoded)
             creds = Credentials.from_service_account_info(info, scopes=SCOPES)
+            print("[sheets] Using Railway service account")
         else:
-            # Local fallback: read the file
+            # Local fallback: read the file directly
             sa_path = (
                 Path(__file__).parent.parent.parent.parent.parent
                 / "service_account.json"
                 / "lilians-form-35954bdfeecd.json"
             )
             creds = Credentials.from_service_account_file(str(sa_path), scopes=SCOPES)
+            print("[sheets] Using local service account file")
 
         return gspread.authorize(creds)
     except Exception as e:
-        print(f"[sheets] Auth error: {e}")
+        print(f"[sheets] ❌ Auth error: {e}", flush=True)
         return None
 
 
