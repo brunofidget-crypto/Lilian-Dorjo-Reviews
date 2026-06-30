@@ -1072,16 +1072,17 @@ async function submitForm() {
   // Show thank-you name line (first name only)
   const t=T[state.lang];
   const nameLine=document.getElementById('ty-name-line');
-  if(nameLine) nameLine.textContent=`${t['ty-for']} ${state.first}`;
+  if(nameLine) nameLine.textContent=`${state.first},`;
 
   // Custom paragraph with dynamic first name
   const tyParagraph = document.getElementById('ty-paragraph');
   if(tyParagraph) {
     const copy = {
-      en: `It was a true pleasure working with you, ${state.first}. Lilian is grateful for the trust you placed in her and looks forward to serving you again.`,
-      es: `Fue un verdadero placer trabajar contigo, ${state.first}. Lilian agradece la confianza que depositaste en ella y espera volverte a servir.`,
-      pt: `Foi um verdadeiro prazer trabalhar com você, ${state.first}. Lilian é grata pela confiança que você depositou nela e espera servi-la novamente.`
+      en: `${state.first}, thank you so much for putting your faith in me. I hope you can build beautiful memories in your new home.\n\nSincerely,\nLilian`,
+      es: `${state.first}, muchas gracias por depositar tu confianza en mí. Espero que puedas crear hermosos recuerdos en tu nuevo hogar.\n\nSinceramente,\nLilian`,
+      pt: `${state.first}, muito obrigada por depositar sua confiança em mim. Espero que você possa construir lindas memórias na sua nova casa.\n\nAtenciosamente,\nLilian`
     };
+    tyParagraph.style.whiteSpace = 'pre-line';
     tyParagraph.textContent = copy[state.lang] || copy['en'];
   }
 
