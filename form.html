@@ -823,9 +823,7 @@ textarea,input { font:inherit; }
         alt="Liliane Dorjo Real Estate"/>
       <p class="welcome-eyebrow" id="ty-name-line"></p>
       <h1 class="welcome-title" data-k="ty-title">Thank you for your <em>time.</em></h1>
-      <div class="welcome-divider"></div>
       <p class="welcome-sub" id="ty-paragraph"></p>
-      <p class="ty-sig" style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.4rem; color:var(--gold); margin-top:20px;">— Lilian Dorjo</p>
     </div>
     <div class="welcome-photo-col">
       <img class="welcome-photo"
@@ -1078,9 +1076,9 @@ async function submitForm() {
   const tyParagraph = document.getElementById('ty-paragraph');
   if(tyParagraph) {
     const copy = {
-      en: `${state.first}, thank you so much for putting your faith in me. I hope you can build beautiful memories in your new home.\n\nSincerely,\nLilian`,
-      es: `${state.first}, muchas gracias por depositar tu confianza en mí. Espero que puedas crear hermosos recuerdos en tu nuevo hogar.\n\nSinceramente,\nLilian`,
-      pt: `${state.first}, muito obrigada por depositar sua confiança em mim. Espero que você possa construir lindas memórias na sua nova casa.\n\nAtenciosamente,\nLilian`
+      en: `Thank you so much for putting your faith in me. I hope you can build beautiful memories in your new home.\n\nSincerely,\nLilian`,
+      es: `Muchas gracias por depositar tu confianza en mí. Espero que puedas crear hermosos recuerdos en tu nuevo hogar.\n\nSinceramente,\nLilian`,
+      pt: `Muito obrigada por depositar sua confiança em mim. Espero que você possa construir lindas memórias na sua nova casa.\n\nAtenciosamente,\nLilian`
     };
     tyParagraph.style.whiteSpace = 'pre-line';
     tyParagraph.textContent = copy[state.lang] || copy['en'];
