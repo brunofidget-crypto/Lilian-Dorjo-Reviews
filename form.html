@@ -198,6 +198,27 @@ textarea,input { font:inherit; }
   color:var(--gold-dim);
   margin-bottom:18px;
 }
+.welcome-brokerage {
+  font-size:.58rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--gold);
+  opacity:.7;
+  margin-bottom:10px;
+  font-weight:500;
+}
+.page-footer-bar {
+  position:fixed;
+  bottom:0; left:0; right:0;
+  text-align:center;
+  padding:10px 20px;
+  font-size:.6rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--cream-dim);
+  pointer-events:none;
+  z-index:10;
+}
 .welcome-title {
   font-family:'Cormorant Garamond',serif;
   font-size:clamp(3rem,5.5vw,4.8rem);
@@ -760,6 +781,7 @@ textarea,input { font:inherit; }
       <img class="welcome-logo"
         src="Website/logo-transparent.png"
         alt="Liliane Dorjo Real Estate"/>
+      <p class="welcome-brokerage">Amity Realty Group</p>
       <p class="welcome-eyebrow" data-k="eyebrow">Client Experience</p>
       <h1 class="welcome-title" data-k="w-title">Your experience matters <em>deeply.</em></h1>
       <div class="welcome-divider"></div>
@@ -1189,5 +1211,8 @@ async function submitForm() {
 renderStarScreens();
 applyT();
 </script>
+<footer class="page-footer-bar">
+  <p>© 2025 Lilian Dorjo &middot; Amity Realty Group &middot; Connecticut &middot; All Rights Reserved</p>
+</footer>
 </body>
 </html>
