@@ -650,24 +650,70 @@ textarea,input { font:inherit; }
 @media (max-width:900px) {
   .welcome-grid { grid-template-columns:1fr 340px; }
 }
+
+/* ── Tablet / large mobile ── */
 @media (max-width:760px) {
-  .welcome-grid { grid-template-columns:1fr; min-height:100vh; height:auto; }
-  .welcome-photo-col { min-height:280px; max-height:320px; }
+  /* Stack as flex column, photo slides to TOP */
+  .welcome-grid {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    height: auto;
+  }
+  .welcome-photo-col {
+    order: -1;               /* photo on top */
+    min-height: 220px;
+    max-height: 260px;
+    flex-shrink: 0;
+  }
   .welcome-photo-col::after {
     background:
-      linear-gradient(to top, var(--navy) 0%, transparent 30%),
-      linear-gradient(to bottom, rgba(13,27,42,.5) 0%, transparent 20%);
+      linear-gradient(to top,    var(--navy) 0%, transparent 40%),
+      linear-gradient(to bottom, rgba(13,27,42,.55) 0%, transparent 25%);
   }
-  .welcome-left { padding:40px 32px; }
+  .welcome-left {
+    padding: 32px 28px 44px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  /* Shrink logo + spacing */
+  .welcome-logo,
+  .ty-welcome-logo  { max-height:54px; margin-bottom:22px; }
+  /* Headline scales down */
+  .welcome-title    { font-size:clamp(1.9rem,8vw,2.8rem); margin-bottom:16px; }
+  .welcome-sub      { font-size:.9rem; margin-bottom:28px; }
+  #ty-paragraph     { font-size:1.08rem; margin-bottom:28px; }
+  /* Inputs */
   .name-grid { grid-template-columns:1fr; }
   .loc-grid  { grid-template-columns:1fr; }
+  /* Question screens */
+  .screen   { padding:20px; }
 }
+
+/* ── Small phones (≤480px) ── */
 @media (max-width:480px) {
-  .welcome-left { padding:32px 24px; }
-  .stars-row { gap:8px; }
-  .star svg { width:38px; height:38px; }
-  #top-bar { padding:16px 24px; }
-  #top-logo { height:52px; }
+  .welcome-photo-col { min-height:180px; max-height:210px; }
+  .welcome-left      { padding:24px 20px 36px; }
+  .welcome-eyebrow   { font-size:.56rem; margin-bottom:12px; }
+  .welcome-title     { font-size:clamp(1.7rem,8vw,2.3rem); }
+  .welcome-sub       { font-size:.86rem; line-height:1.75; margin-bottom:20px; }
+  #ty-paragraph      { font-size:1rem; line-height:1.9; }
+  /* Stars — keep tappable */
+  .stars-row { gap:6px; }
+  .star svg  { width:34px; height:34px; }
+  /* Top bar */
+  #top-bar   { padding:14px 20px; }
+  #top-logo  { height:44px; }
+  /* Screens */
+  .screen    { padding:16px 16px; }
+  /* Section titles on question cards */
+  .section-title { font-size:clamp(1.5rem,7vw,2rem); }
+  /* Full-width CTA button on small screens */
+  .btn-continue {
+    width: 100%;
+    justify-content: center;
+    padding: 15px 20px;
+  }
 }
 </style>
 </head>
