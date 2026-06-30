@@ -4,18 +4,19 @@ app.py — Lilian Dorjo Client Experience Form
 Every submission is saved instantly to Google Sheets (permanent) + emailed to Lilian.
 """
 
-import json, os, smtplib, datetime, threading
+import base64, json, os, smtplib, datetime
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from flask import Flask, request, jsonify, send_from_directory, abort
 
 # ─── Config ────────────────────────────────────────────────────────────────
-BASE_DIR     = Path(__file__).parent
-PORT         = int(os.environ.get("PORT", 8080))
-LILIAN_EMAIL = "Liliandrealtor25@gmail.com"
-SHEET_ID     = os.environ.get("GOOGLE_SHEET_ID", "1Ut51gVmWf4b6pZ-1HyTQ857aLiY9aysLISca2hJVAhg")
-GOOGLE_SA_B64 = os.environ.get("GOOGLE_SA_B64", "")  # base64-encoded service account JSON
+BASE_DIR      = Path(__file__).parent
+PORT          = int(os.environ.get("PORT", 8080))
+LILIAN_EMAIL  = "Liliandrealtor25@gmail.com"
+SHEET_ID      = os.environ.get("GOOGLE_SHEET_ID", "1Ut51gVmWf4b6pZ-1HyTQ857aLiY9aysLISca2hJVAhg")
+GOOGLE_SA_B64 = os.environ.get("GOOGLE_SA_B64", "")   # base64-encoded service account JSON
 
 SMTP_HOST = os.environ.get("EMAIL_HOST",     "smtp.gmail.com")
 SMTP_PORT = int(os.environ.get("EMAIL_PORT", 587))
@@ -24,14 +25,18 @@ SMTP_PASS = os.environ.get("EMAIL_PASSWORD", "")
 FROM_NAME = "Lilian Dorjo"
 FROM_ADDR = SMTP_USER
 
-app = Flask(__name__, static_folder=".", static_url_path="")
-
 SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}"
 
-# ─── Google Sheets client ───────────────────────────────────────────────────
-def _sheets_client():
+app      = Flask(__name__, static_folder=".", static_url_path="")
+executor = ThreadPoolExecutor(max_workers=4)   # persistent thread pool
+
+
+# ─── Google Sheets — init once at startup ───────────────────────────────────
+_ws = None   # the worksheet object, reused for all writes
+
+def _init_sheets():
+    global _ws
     try:
-        import base64
         import gspread
         from google.oauth2.service_account import Credentials
 
@@ -41,46 +46,48 @@ def _sheets_client():
         ]
 
         if GOOGLE_SA_B64:
-            # Railway: decode base64 → JSON
             decoded = base64.b64decode(GOOGLE_SA_B64).decode("utf-8")
-            info = json.loads(decoded)
-            creds = Credentials.from_service_account_info(info, scopes=SCOPES)
-            print("[sheets] Using Railway service account")
+            info    = json.loads(decoded)
+            creds   = Credentials.from_service_account_info(info, scopes=SCOPES)
+            print("[sheets] ✅ Service account loaded from env var", flush=True)
         else:
-            # Local fallback: read the file directly
             sa_path = (
                 Path(__file__).parent.parent.parent.parent.parent
                 / "service_account.json"
                 / "lilians-form-35954bdfeecd.json"
             )
             creds = Credentials.from_service_account_file(str(sa_path), scopes=SCOPES)
-            print("[sheets] Using local service account file")
+            print(f"[sheets] ✅ Service account loaded from file: {sa_path}", flush=True)
 
-        return gspread.authorize(creds)
+        client = gspread.authorize(creds)
+        sh     = client.open_by_key(SHEET_ID)
+        _ws    = sh.sheet1
+        print(f"[sheets] ✅ Connected to sheet: {sh.title}", flush=True)
     except Exception as e:
-        print(f"[sheets] ❌ Auth error: {e}", flush=True)
-        return None
+        print(f"[sheets] ❌ Init failed: {e}", flush=True)
+        _ws = None
+
+# Run once at startup
+_init_sheets()
 
 
 def append_to_sheet(data: dict):
-    """Append one row — runs in a background thread."""
-    client = _sheets_client()
-    if not client:
-        print("[sheets] No client — skipping")
+    """Append one submission row to the worksheet."""
+    if _ws is None:
+        print("[sheets] ❌ No worksheet — skipping write", flush=True)
         return
     try:
-        stars = data.get("stars", [])
-        s     = (stars + [0]*6)[:6]
-        avg   = round(sum(stars)/max(len(stars),1), 2) if stars else 0
-
+        stars  = data.get("stars", [])
+        s      = (stars + [0]*6)[:6]
+        avg    = round(sum(stars)/max(len(stars), 1), 2) if stars else 0
         ts_raw = data.get("submittedAt", "")
         try:
             dt = datetime.datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
             ts = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
         except Exception:
-            ts = ts_raw
+            ts = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
 
-        row = [
+        _ws.append_row([
             ts,
             data.get("firstName", ""),
             data.get("lastName",  ""),
@@ -88,14 +95,12 @@ def append_to_sheet(data: dict):
             data.get("location",  ""),
             s[0], s[1], s[2], s[3], s[4], s[5],
             avg,
-            data.get("thoughts",     ""),
-            data.get("fillSeconds",  ""),
-        ]
-        sh = client.open_by_key(SHEET_ID)
-        sh.sheet1.append_row(row, value_input_option="USER_ENTERED")
-        print(f"[sheets] ✅ {data.get('firstName')} {data.get('lastName')}")
+            data.get("thoughts",    ""),
+            data.get("fillSeconds", ""),
+        ], value_input_option="USER_ENTERED")
+        print(f"[sheets] ✅ Row saved — {data.get('firstName')} {data.get('lastName')}", flush=True)
     except Exception as e:
-        print(f"[sheets] ❌ {e}")
+        print(f"[sheets] ❌ Write failed: {e}", flush=True)
 
 
 # ─── Routes ─────────────────────────────────────────────────────────────────
@@ -117,16 +122,24 @@ def serve_website_assets(filename):
     abort(404)
 
 
+@app.route("/health")
+def health():
+    return jsonify({
+        "ok":        True,
+        "sheets":    _ws is not None,
+        "sheet_url": SHEET_URL,
+    })
+
+
 @app.route("/submit", methods=["POST"])
 def submit():
     data = request.get_json(force=True, silent=True)
     if not data:
         return jsonify({"ok": False, "error": "Invalid JSON"}), 400
 
-    # Save to Google Sheets (background — non-blocking)
-    threading.Thread(target=append_to_sheet, args=(data,), daemon=True).start()
-    # Email Lilian (background — non-blocking)
-    threading.Thread(target=notify_lilian,   args=(data,), daemon=True).start()
+    # Submit to thread pool (survives past response, unlike daemon threads)
+    executor.submit(append_to_sheet, data)
+    executor.submit(notify_lilian,   data)
 
     return jsonify({"ok": True})
 
@@ -134,7 +147,6 @@ def submit():
 # ─── Email ──────────────────────────────────────────────────────────────────
 def send_email(to, subject, html):
     if not SMTP_USER or not SMTP_PASS:
-        print(f"[email] SMTP not configured")
         return
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
@@ -146,9 +158,9 @@ def send_email(to, subject, html):
             s.ehlo(); s.starttls()
             s.login(SMTP_USER, SMTP_PASS)
             s.sendmail(FROM_ADDR, [to], msg.as_string())
-        print(f"[email] Sent to {to}")
+        print(f"[email] ✅ Sent to {to}", flush=True)
     except Exception as e:
-        print(f"[email] ERROR: {e}")
+        print(f"[email] ❌ {e}", flush=True)
 
 
 def notify_lilian(data: dict):
@@ -191,7 +203,6 @@ def notify_lilian(data: dict):
   </p>
 </div>
 </body></html>"""
-
     send_email(LILIAN_EMAIL, f"New Review — {first} {last}", html)
 
 
