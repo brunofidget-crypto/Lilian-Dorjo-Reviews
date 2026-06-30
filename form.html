@@ -653,7 +653,7 @@ textarea,input { font:inherit; }
 
 /* ── Tablet / large mobile ── */
 @media (max-width:760px) {
-  /* Stack as flex column, photo slides to TOP */
+  /* Stack as flex column — text on top, full photo on bottom */
   .welcome-grid {
     display: flex;
     flex-direction: column;
@@ -661,18 +661,32 @@ textarea,input { font:inherit; }
     height: auto;
   }
   .welcome-photo-col {
-    order: -1;               /* photo on top */
-    min-height: 220px;
-    max-height: 260px;
+    order: 1;                /* photo on bottom */
+    min-height: auto;
+    max-height: none;
+    height: auto;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 24px 32px;
+    background: var(--navy);
   }
-  .welcome-photo-col::after {
-    background:
-      linear-gradient(to top,    var(--navy) 0%, transparent 40%),
-      linear-gradient(to bottom, rgba(13,27,42,.55) 0%, transparent 25%);
+  /* Remove cover-mode gradient — not needed with contain */
+  .welcome-photo-col::after { display: none; }
+  /* Show full photo, no cropping */
+  .welcome-photo {
+    width: auto;
+    height: auto;
+    max-height: 340px;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 6px;
+    filter: brightness(.92) contrast(1.05) saturate(1.05);
   }
   .welcome-left {
-    padding: 32px 28px 44px;
+    padding: 32px 28px 28px;
     flex: 1;
     overflow-y: auto;
   }
@@ -681,8 +695,8 @@ textarea,input { font:inherit; }
   .ty-welcome-logo  { max-height:54px; margin-bottom:22px; }
   /* Headline scales down */
   .welcome-title    { font-size:clamp(1.9rem,8vw,2.8rem); margin-bottom:16px; }
-  .welcome-sub      { font-size:.9rem; margin-bottom:28px; }
-  #ty-paragraph     { font-size:1.08rem; margin-bottom:28px; }
+  .welcome-sub      { font-size:.9rem; margin-bottom:24px; }
+  #ty-paragraph     { font-size:1.08rem; margin-bottom:24px; }
   /* Inputs */
   .name-grid { grid-template-columns:1fr; }
   .loc-grid  { grid-template-columns:1fr; }
@@ -692,11 +706,14 @@ textarea,input { font:inherit; }
 
 /* ── Small phones (≤480px) ── */
 @media (max-width:480px) {
-  .welcome-photo-col { min-height:180px; max-height:210px; }
-  .welcome-left      { padding:24px 20px 36px; }
+  .welcome-photo {
+    max-height: 280px;
+  }
+  .welcome-photo-col { padding: 12px 16px 24px; }
+  .welcome-left      { padding:24px 20px 24px; }
   .welcome-eyebrow   { font-size:.56rem; margin-bottom:12px; }
   .welcome-title     { font-size:clamp(1.7rem,8vw,2.3rem); }
-  .welcome-sub       { font-size:.86rem; line-height:1.75; margin-bottom:20px; }
+  .welcome-sub       { font-size:.86rem; line-height:1.75; margin-bottom:18px; }
   #ty-paragraph      { font-size:1rem; line-height:1.9; }
   /* Stars — keep tappable */
   .stars-row { gap:6px; }
@@ -705,10 +722,10 @@ textarea,input { font:inherit; }
   #top-bar   { padding:14px 20px; }
   #top-logo  { height:44px; }
   /* Screens */
-  .screen    { padding:16px 16px; }
-  /* Section titles on question cards */
+  .screen    { padding:16px; }
+  /* Section titles */
   .section-title { font-size:clamp(1.5rem,7vw,2rem); }
-  /* Full-width CTA button on small screens */
+  /* Full-width CTA button */
   .btn-continue {
     width: 100%;
     justify-content: center;
