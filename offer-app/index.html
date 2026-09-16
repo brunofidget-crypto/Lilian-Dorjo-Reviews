@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Offer Builder</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>Offer to Purchase — Builder</h1>
+  <p>Fill in the deal terms once, get a completed contract PDF to review and download.</p>
+</header>
+
+<main>
+  <form id="offerForm">
+
+    <div class="card">
+      <h2>Buyer &amp; Seller</h2>
+      <p class="hint">Full legal names, exactly as they should appear on the contract.</p>
+      <div class="field">
+        <label for="buyerNames">Buyer(s)</label>
+        <input type="text" id="buyerNames" placeholder="Jane A. Doe" required />
+      </div>
+      <div class="field">
+        <label for="sellerNames">Seller(s)</label>
+        <input type="text" id="sellerNames" placeholder="John B. Smith" required />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Property</h2>
+      <div class="field">
+        <label for="propertyAddress">Street Address</label>
+        <input type="text" id="propertyAddress" placeholder="123 Main St" required />
+      </div>
+      <div class="row3">
+        <div class="field">
+          <label for="propertyTown">Town / City</label>
+          <input type="text" id="propertyTown" required />
+        </div>
+        <div class="field">
+          <label for="propertyState">State</label>
+          <input type="text" id="propertyState" value="CT" required />
+        </div>
+        <div class="field">
+          <label for="propertyZip">Zip</label>
+          <input type="text" id="propertyZip" required />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Price &amp; Deposit</h2>
+      <div class="row">
+        <div class="field">
+          <label for="purchasePrice">Purchase Price ($)</label>
+          <input type="number" id="purchasePrice" min="0" step="1" required />
+        </div>
+        <div class="field">
+          <label for="depositAmount">Initial Deposit ($)</label>
+          <input type="number" id="depositAmount" min="0" step="1" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="depositHolder">Deposit Held By <span class="sub">(escrow agent / brokerage)</span></label>
+        <input type="text" id="depositHolder" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Financing</h2>
+      <div class="field">
+        <label for="financingType">Financing Type</label>
+        <select id="financingType">
+          <option value="Conventional">Conventional</option>
+          <option value="FHA">FHA</option>
+          <option value="VA">VA</option>
+          <option value="Cash">Cash — no financing contingency</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="mortgageAmount">Mortgage Amount ($)</label>
+          <input type="number" id="mortgageAmount" min="0" step="1" />
+        </div>
+        <div class="field">
+          <label for="mortgageDeadline">Mortgage Commitment Date</label>
+          <input type="date" id="mortgageDeadline" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Contingencies &amp; Dates</h2>
+      <div class="row">
+        <div class="field">
+          <label for="inspectionDeadline">Inspection Deadline</label>
+          <input type="date" id="inspectionDeadline" />
+        </div>
+        <div class="field">
+          <label for="offerExpiration">Offer Expires</label>
+          <input type="date" id="offerExpiration" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="closingDate">Closing Date</label>
+          <input type="date" id="closingDate" required />
+        </div>
+        <div class="field">
+          <label for="possessionDate">Possession Date</label>
+          <input type="date" id="possessionDate" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="otherContingencies">Other Contingencies</label>
+        <textarea id="otherContingencies" placeholder="e.g. sale of buyer's current home, well/septic, appraisal"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Inclusions &amp; Exclusions</h2>
+      <div class="field">
+        <label for="inclusions">Included Items</label>
+        <textarea id="inclusions" placeholder="Refrigerator, washer/dryer, window treatments..."></textarea>
+      </div>
+      <div class="field">
+        <label for="exclusions">Excluded Items</label>
+        <textarea id="exclusions" placeholder="Dining room chandelier, shed..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Attorneys</h2>
+      <div class="row">
+        <div class="field">
+          <label for="buyerAttorney">Buyer's Attorney</label>
+          <input type="text" id="buyerAttorney" placeholder="Name, firm, phone" />
+        </div>
+        <div class="field">
+          <label for="sellerAttorney">Seller's Attorney</label>
+          <input type="text" id="sellerAttorney" placeholder="Name, firm, phone" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Brokers &amp; Commission</h2>
+      <div class="row">
+        <div class="field">
+          <label for="listingBroker">Listing Broker</label>
+          <input type="text" id="listingBroker" />
+        </div>
+        <div class="field">
+          <label for="sellingBroker">Selling Broker</label>
+          <input type="text" id="sellingBroker" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="commissionSplit">Commission</label>
+        <input type="text" id="commissionSplit" placeholder="e.g. 2.5% to selling broker" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Special Provisions</h2>
+      <p class="hint">Anything else that needs to go on the contract — this gets dropped into the special provisions / addendum section.</p>
+      <div class="field">
+        <textarea id="specialProvisions" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="reviewBtn" class="btn-secondary">Review Answers</button>
+      <button type="submit" id="generateBtn" class="btn-primary">Generate Offer PDF</button>
+    </div>
+    <div id="status"></div>
+  </form>
+
+  <div class="card hidden" id="reviewCard">
+    <h2>Review Before You Generate</h2>
+    <p class="hint">Double-check everything below, then close this and click "Generate Offer PDF."</p>
+    <table class="review-table" id="reviewTable"></table>
+    <div class="actions">
+      <button type="button" id="closeReviewBtn" class="btn-secondary">Close Review</button>
+    </div>
+  </div>
+</main>
+
+<footer>For internal use — always give the generated PDF a final read-through before sending.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="field-map.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
