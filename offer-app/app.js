@@ -1,19 +1,46 @@
 /**
  * app.js — reads the offer form, fills template.pdf's real form fields
- * using FIELD_MAP (see field-map.js), and lets the user preview/download
- * the completed contract. Everything happens in the browser — nothing is
- * uploaded anywhere.
+ * using TEXT_FIELD_MAP / RADIO_FIELD_MAP (see field-map.js), and lets the
+ * user preview/download the completed contract. Everything happens in the
+ * browser — nothing is uploaded anywhere.
  */
 
 const TEMPLATE_URL = "template.pdf";
 
+function buildInspectionGrid() {
+  const grid = document.getElementById("inspectionGrid");
+  grid.innerHTML = INSPECTION_ITEMS.map(({ formId, label }) => `
+    <div class="field row" style="grid-template-columns: 2fr 1fr;">
+      <label style="align-self:center;margin:0;">${label}</label>
+      <select id="${formId}">
+        <option value="">—</option>
+        <option value="yes">Required (YES)</option>
+        <option value="waived">Waived</option>
+      </select>
+    </div>
+  `).join("");
+}
+buildInspectionGrid();
+
+function allFormIds() {
+  const ids = new Set();
+  for (const { formId } of TEXT_FIELD_MAP) ids.add(formId);
+  for (const { formId } of RADIO_FIELD_MAP) ids.add(formId);
+  return [...ids];
+}
+
 function getFormValues() {
   const values = {};
-  for (const { formId } of FIELD_MAP) {
+  for (const formId of allFormIds()) {
     const el = document.getElementById(formId);
     values[formId] = el ? el.value : "";
   }
   return values;
+}
+
+function currencyNumber(raw) {
+  const n = Number(raw);
+  return Number.isNaN(n) ? 0 : n;
 }
 
 function formatValue(raw, type) {
@@ -31,6 +58,26 @@ function formatValue(raw, type) {
   return raw;
 }
 
+function computeTotal(values) {
+  return (
+    currencyNumber(values.initialDeposit) +
+    currencyNumber(values.additionalDeposit) +
+    currencyNumber(values.mortgageAmount) +
+    currencyNumber(values.balanceAtClosing)
+  );
+}
+
+function updateTotalDisplay() {
+  const values = getFormValues();
+  const total = computeTotal(values);
+  document.getElementById("totalPurchasePriceDisplay").value =
+    total.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+}
+
+document.querySelectorAll(".price-part").forEach((el) =>
+  el.addEventListener("input", updateTotalDisplay)
+);
+
 function labelFor(formId) {
   const el = document.querySelector(`label[for="${formId}"]`);
   return el ? el.textContent.trim() : formId;
@@ -42,15 +89,21 @@ function setStatus(msg, kind) {
   el.className = kind || "";
 }
 
-function buildReviewRows(values) {
-  return FIELD_MAP
+function buildReviewRows(values, total) {
+  const rows = TEXT_FIELD_MAP
     .filter(({ formId }) => values[formId])
     .map(({ formId, type }) => {
       const label = labelFor(formId);
       const val = formatValue(values[formId], type);
       return `<tr><td>${label}</td><td>${escapeHtml(val)}</td></tr>`;
-    })
-    .join("");
+    });
+  rows.push(`<tr><td>Total Purchase Price</td><td>${escapeHtml(total.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }))}</td></tr>`);
+  for (const { formId } of RADIO_FIELD_MAP) {
+    if (values[formId]) {
+      rows.push(`<tr><td>${labelFor(formId) || formId}</td><td>${escapeHtml(values[formId])}</td></tr>`);
+    }
+  }
+  return rows.join("");
 }
 
 function escapeHtml(str) {
@@ -61,7 +114,7 @@ function escapeHtml(str) {
 
 document.getElementById("reviewBtn").addEventListener("click", () => {
   const values = getFormValues();
-  document.getElementById("reviewTable").innerHTML = buildReviewRows(values);
+  document.getElementById("reviewTable").innerHTML = buildReviewRows(values, computeTotal(values));
   document.getElementById("reviewCard").classList.remove("hidden");
   document.getElementById("reviewCard").scrollIntoView({ behavior: "smooth" });
 });
@@ -87,18 +140,30 @@ document.getElementById("offerForm").addEventListener("submit", async (e) => {
     const pdfDoc = await PDFDocument.load(templateBytes);
     const form = pdfDoc.getForm();
     const values = getFormValues();
+    values.totalPurchasePrice = String(computeTotal(values));
 
-    const missingFields = [];
+    const problems = [];
 
-    for (const { formId, pdfField, type } of FIELD_MAP) {
+    for (const { formId, pdfField, type } of TEXT_FIELD_MAP) {
       const raw = values[formId];
       if (!raw) continue;
       const text = formatValue(raw, type);
       try {
-        const field = form.getTextField(pdfField);
-        field.setText(text);
+        form.getTextField(pdfField).setText(text);
       } catch (err) {
-        missingFields.push(pdfField);
+        problems.push(`text field "${pdfField}" (${err.message})`);
+      }
+    }
+
+    for (const { formId, pdfField, choices } of RADIO_FIELD_MAP) {
+      const raw = values[formId];
+      if (!raw) continue;
+      const exportValue = choices[raw];
+      if (!exportValue) continue;
+      try {
+        form.getRadioGroup(pdfField).select(exportValue);
+      } catch (err) {
+        problems.push(`radio group "${pdfField}" (${err.message})`);
       }
     }
 
@@ -120,11 +185,8 @@ document.getElementById("offerForm").addEventListener("submit", async (e) => {
 
     window.open(url, "_blank");
 
-    if (missingFields.length) {
-      setStatus(
-        `Downloaded, but ${missingFields.length} field name(s) in field-map.js didn't match the PDF: ${missingFields.join(", ")}. Open the console and run debugListFields() to see the real names.`,
-        "error"
-      );
+    if (problems.length) {
+      setStatus(`Downloaded, but some fields didn't fill: ${problems.join("; ")}`, "error");
     } else {
       setStatus("Offer PDF generated — review it carefully before sending.", "ok");
     }
@@ -137,7 +199,7 @@ document.getElementById("offerForm").addEventListener("submit", async (e) => {
 });
 
 // Debug helper: run debugListFields() in the browser console to print
-// every real field name in template.pdf, so field-map.js can be corrected.
+// every real field name in template.pdf.
 window.debugListFields = async function () {
   const { PDFDocument } = PDFLib;
   const templateBytes = await fetch(TEMPLATE_URL).then((r) => r.arrayBuffer());

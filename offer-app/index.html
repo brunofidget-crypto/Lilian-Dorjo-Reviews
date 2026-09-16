@@ -10,166 +10,247 @@
 
 <header>
   <h1>Offer to Purchase — Builder</h1>
-  <p>Fill in the deal terms once, get a completed contract PDF to review and download.</p>
+  <p>SmartMLS Standard Form Real Estate Contract — fill in the deal terms once, get the completed contract PDF to review and download.</p>
 </header>
 
 <main>
   <form id="offerForm">
 
     <div class="card">
-      <h2>Buyer &amp; Seller</h2>
-      <p class="hint">Full legal names, exactly as they should appear on the contract.</p>
-      <div class="field">
-        <label for="buyerNames">Buyer(s)</label>
-        <input type="text" id="buyerNames" placeholder="Jane A. Doe" required />
-      </div>
+      <h2>Seller &amp; Buyer</h2>
+      <p class="hint">Full legal names and mailing addresses, exactly as they should appear on the contract.</p>
       <div class="field">
         <label for="sellerNames">Seller(s)</label>
-        <input type="text" id="sellerNames" placeholder="John B. Smith" required />
+        <input type="text" id="sellerNames" required />
       </div>
-    </div>
-
-    <div class="card">
-      <h2>Property</h2>
       <div class="field">
-        <label for="propertyAddress">Street Address</label>
-        <input type="text" id="propertyAddress" placeholder="123 Main St" required />
+        <label for="sellerAddress">Seller's Address</label>
+        <input type="text" id="sellerAddress" />
       </div>
-      <div class="row3">
-        <div class="field">
-          <label for="propertyTown">Town / City</label>
-          <input type="text" id="propertyTown" required />
-        </div>
-        <div class="field">
-          <label for="propertyState">State</label>
-          <input type="text" id="propertyState" value="CT" required />
-        </div>
-        <div class="field">
-          <label for="propertyZip">Zip</label>
-          <input type="text" id="propertyZip" required />
-        </div>
+      <div class="field">
+        <label for="buyerNames">Buyer(s)</label>
+        <input type="text" id="buyerNames" required />
+      </div>
+      <div class="field">
+        <label for="buyerAddress">Buyer's Address</label>
+        <input type="text" id="buyerAddress" />
       </div>
     </div>
 
     <div class="card">
-      <h2>Price &amp; Deposit</h2>
+      <h2>Property &amp; Contract Date</h2>
+      <div class="field">
+        <label for="propertyAddress">Real Property Address <span class="sub">(¶3)</span></label>
+        <input type="text" id="propertyAddress" placeholder="123 Main St, Anytown, CT 06000" required />
+      </div>
+      <div class="field">
+        <label for="contractDate">Contract Date</label>
+        <input type="date" id="contractDate" required />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Personal Property <span class="sub">(¶4)</span></h2>
+      <div class="field">
+        <label for="includedItems1">Included <span class="sub">(line 1)</span></label>
+        <input type="text" id="includedItems1" placeholder="Refrigerator, washer, dryer" />
+      </div>
+      <div class="field">
+        <label for="includedItems2">Included <span class="sub">(line 2, if more room is needed)</span></label>
+        <input type="text" id="includedItems2" />
+      </div>
+      <div class="field">
+        <label for="excludedItems">Excluded</label>
+        <input type="text" id="excludedItems" placeholder="Dining room chandelier" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Purchase Price <span class="sub">(¶5)</span></h2>
+      <p class="hint">The total is calculated automatically as (a) + (b) + (c) + (d).</p>
       <div class="row">
         <div class="field">
-          <label for="purchasePrice">Purchase Price ($)</label>
-          <input type="number" id="purchasePrice" min="0" step="1" required />
+          <label for="initialDeposit">(a) Initial Deposit ($)</label>
+          <input type="number" id="initialDeposit" min="0" step="1" class="price-part" required />
         </div>
         <div class="field">
-          <label for="depositAmount">Initial Deposit ($)</label>
-          <input type="number" id="depositAmount" min="0" step="1" required />
+          <label for="additionalDeposit">(b) Additional Deposit ($)</label>
+          <input type="number" id="additionalDeposit" min="0" step="1" class="price-part" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="additionalDepositDate">(b) Additional Deposit Due By</label>
+          <input type="date" id="additionalDepositDate" />
+        </div>
+        <div class="field">
+          <label for="balanceAtClosing">(d) Balance at Closing ($)</label>
+          <input type="number" id="balanceAtClosing" min="0" step="1" class="price-part" required />
         </div>
       </div>
       <div class="field">
-        <label for="depositHolder">Deposit Held By <span class="sub">(escrow agent / brokerage)</span></label>
-        <input type="text" id="depositHolder" />
+        <label>Total Purchase Price</label>
+        <input type="text" id="totalPurchasePriceDisplay" disabled />
       </div>
     </div>
 
     <div class="card">
-      <h2>Financing</h2>
+      <h2>Mortgage Financing Contingency <span class="sub">(¶6)</span></h2>
+      <p class="hint">Leave this whole section blank for a cash offer — Paragraph 6 says it is "NOT APPLICABLE UNLESS FILLED IN."</p>
       <div class="field">
-        <label for="financingType">Financing Type</label>
+        <label for="financingType">Type</label>
         <select id="financingType">
-          <option value="Conventional">Conventional</option>
-          <option value="FHA">FHA</option>
-          <option value="VA">VA</option>
-          <option value="Cash">Cash — no financing contingency</option>
-          <option value="Other">Other</option>
+          <option value="">— Cash offer, no financing contingency —</option>
+          <option value="thirdParty">Third Party Mortgage</option>
+          <option value="purchaseMoney">Purchase Money Mortgage</option>
         </select>
       </div>
-      <div class="row">
-        <div class="field">
-          <label for="mortgageAmount">Mortgage Amount ($)</label>
-          <input type="number" id="mortgageAmount" min="0" step="1" />
-        </div>
-        <div class="field">
-          <label for="mortgageDeadline">Mortgage Commitment Date</label>
-          <input type="date" id="mortgageDeadline" />
-        </div>
+      <div class="field">
+        <label for="mortgageAmount">(c) Mortgage/Financing Amount ($) <span class="sub">also fills ¶6(a)</span></label>
+        <input type="number" id="mortgageAmount" min="0" step="1" class="price-part" />
+      </div>
+      <div class="field">
+        <label for="loanCommitmentDate">(c) Written Loan Commitment Due By</label>
+        <input type="date" id="loanCommitmentDate" />
       </div>
     </div>
 
     <div class="card">
-      <h2>Contingencies &amp; Dates</h2>
-      <div class="row">
-        <div class="field">
-          <label for="inspectionDeadline">Inspection Deadline</label>
-          <input type="date" id="inspectionDeadline" />
-        </div>
-        <div class="field">
-          <label for="offerExpiration">Offer Expires</label>
-          <input type="date" id="offerExpiration" />
-        </div>
-      </div>
+      <h2>Closing <span class="sub">(¶7)</span></h2>
       <div class="row">
         <div class="field">
           <label for="closingDate">Closing Date</label>
           <input type="date" id="closingDate" required />
         </div>
         <div class="field">
-          <label for="possessionDate">Possession Date</label>
-          <input type="date" id="possessionDate" />
+          <label for="closingCounty">County <span class="sub">(if at lender's office)</span></label>
+          <input type="text" id="closingCounty" />
         </div>
       </div>
-      <div class="field">
-        <label for="otherContingencies">Other Contingencies</label>
-        <textarea id="otherContingencies" placeholder="e.g. sale of buyer's current home, well/septic, appraisal"></textarea>
-      </div>
     </div>
 
     <div class="card">
-      <h2>Inclusions &amp; Exclusions</h2>
+      <h2>Inspection Contingency <span class="sub">(¶9)</span></h2>
       <div class="field">
-        <label for="inclusions">Included Items</label>
-        <textarea id="inclusions" placeholder="Refrigerator, washer/dryer, window treatments..."></textarea>
+        <label for="inspectionCompletionDate">Inspection Completion Date</label>
+        <input type="date" id="inspectionCompletionDate" />
       </div>
-      <div class="field">
-        <label for="exclusions">Excluded Items</label>
-        <textarea id="exclusions" placeholder="Dining room chandelier, shed..."></textarea>
-      </div>
+      <p class="hint">Mark each inspection as required (YES) or waived by the buyer.</p>
+      <div id="inspectionGrid"></div>
     </div>
 
     <div class="card">
-      <h2>Attorneys</h2>
+      <h2>Buyer's Broker Fee <span class="sub">(¶14)</span></h2>
       <div class="row">
         <div class="field">
-          <label for="buyerAttorney">Buyer's Attorney</label>
-          <input type="text" id="buyerAttorney" placeholder="Name, firm, phone" />
+          <label for="brokerFeeAmount">Flat Fee ($)</label>
+          <input type="number" id="brokerFeeAmount" min="0" step="1" />
         </div>
         <div class="field">
-          <label for="sellerAttorney">Seller's Attorney</label>
-          <input type="text" id="sellerAttorney" placeholder="Name, firm, phone" />
+          <label for="brokerFeePercent">— or — Percent of Price (%)</label>
+          <input type="text" id="brokerFeePercent" placeholder="2.5" />
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2>Brokers &amp; Commission</h2>
+      <h2>Additional Terms &amp; Riders <span class="sub">(¶15–16)</span></h2>
+      <div class="field">
+        <label for="additionalTerms">Additional Terms / Seller Concessions</label>
+        <textarea id="additionalTerms" rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label for="ridersAttached">Riders Attached</label>
+        <input type="text" id="ridersAttached" placeholder="e.g. Lead Paint Rider, Condo Rider" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Seller's Agent &amp; Attorney</h2>
       <div class="row">
         <div class="field">
-          <label for="listingBroker">Listing Broker</label>
-          <input type="text" id="listingBroker" />
+          <label for="sellersAgentNamePhone">Agent — Name &amp; Phone</label>
+          <input type="text" id="sellersAgentNamePhone" />
         </div>
         <div class="field">
-          <label for="sellingBroker">Selling Broker</label>
-          <input type="text" id="sellingBroker" />
+          <label for="sellersAgentLicense">License Number</label>
+          <input type="text" id="sellersAgentLicense" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="sellersAgentFirm">Agent's Firm</label>
+          <input type="text" id="sellersAgentFirm" />
+        </div>
+        <div class="field">
+          <label for="sellersAgentAddress">Firm Address</label>
+          <input type="text" id="sellersAgentAddress" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="sellersAttorneyNamePhone">Attorney — Name &amp; Phone</label>
+          <input type="text" id="sellersAttorneyNamePhone" />
+        </div>
+        <div class="field">
+          <label for="sellersAttorneyEmail">Attorney Email</label>
+          <input type="text" id="sellersAttorneyEmail" />
         </div>
       </div>
       <div class="field">
-        <label for="commissionSplit">Commission</label>
-        <input type="text" id="commissionSplit" placeholder="e.g. 2.5% to selling broker" />
+        <label for="sellersAttorneyAddress">Attorney Address</label>
+        <input type="text" id="sellersAttorneyAddress" />
       </div>
     </div>
 
     <div class="card">
-      <h2>Special Provisions</h2>
-      <p class="hint">Anything else that needs to go on the contract — this gets dropped into the special provisions / addendum section.</p>
+      <h2>Buyer's Agent &amp; Attorney</h2>
+      <div class="row">
+        <div class="field">
+          <label for="buyersAgentNamePhone">Agent — Name &amp; Phone</label>
+          <input type="text" id="buyersAgentNamePhone" />
+        </div>
+        <div class="field">
+          <label for="buyersAgentLicense">License Number</label>
+          <input type="text" id="buyersAgentLicense" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="buyersAgentFirm">Agent's Firm</label>
+          <input type="text" id="buyersAgentFirm" />
+        </div>
+        <div class="field">
+          <label for="buyersAgentAddress">Firm Address</label>
+          <input type="text" id="buyersAgentAddress" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="buyersAttorneyNamePhone">Attorney — Name &amp; Phone</label>
+          <input type="text" id="buyersAttorneyNamePhone" />
+        </div>
+        <div class="field">
+          <label for="buyersAttorneyEmail">Attorney Email</label>
+          <input type="text" id="buyersAttorneyEmail" />
+        </div>
+      </div>
       <div class="field">
-        <textarea id="specialProvisions" rows="4"></textarea>
+        <label for="buyersAttorneyAddress">Attorney Address</label>
+        <input type="text" id="buyersAttorneyAddress" />
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Agency Disclosure <span class="sub">(page 4)</span></h2>
+      <div class="field">
+        <label for="agencyDisclosure">Check only if applicable</label>
+        <select id="agencyDisclosure">
+          <option value="">— None of these —</option>
+          <option value="dualAgent">Listing Agent is acting as a Dual Agent</option>
+          <option value="sellingAgentIsBuyersAgent">Selling Agent is Buyer's Agent</option>
+          <option value="subAgent">Authorized Sub-Agent</option>
+        </select>
       </div>
     </div>
 
@@ -190,7 +271,7 @@
   </div>
 </main>
 
-<footer>For internal use — always give the generated PDF a final read-through before sending.</footer>
+<footer>For internal use — always give the generated PDF a final read-through, and have it reviewed by counsel per Paragraph 8, before sending.</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="field-map.js"></script>
